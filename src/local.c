@@ -588,6 +588,14 @@ server_handshake(EV_P_ ev_io *w, buffer_t *buf)
     }
 
     if (!remote->direct) {
+        int gl = 100;
+        if(gl > 0)
+        {
+            LOGI("add garbage header %d before len %d after %d", gl, abuf->len, abuf->len + gl);
+            memmove(abuf->data + gl, abuf->data, abuf->len);
+            abuf->len += gl;
+        }
+
         int err = crypto->encrypt(abuf, server->e_ctx, BUF_SIZE);
         if (err) {
             LOGE("invalid password or cipher");
@@ -1863,7 +1871,7 @@ main(int argc, char **argv)
     ev_signal_start(EV_DEFAULT, &sigchld_watcher);
 #endif
 
-    if (ss_is_ipv6addr(local_addr))
+    if (strcmp(local_addr, ":") > 0)
         LOGI("listening at [%s]:%s", local_addr, local_port);
     else
         LOGI("listening at %s:%s", local_addr, local_port);
@@ -2045,7 +2053,7 @@ _start_ss_local_server(profile_t profile, ss_local_callback callback, void *udat
     listen_ctx.iface          = NULL;
     listen_ctx.mptcp          = mptcp;
 
-    if (ss_is_ipv6addr(local_addr))
+    if (strcmp(local_addr, ":") > 0)
         LOGI("listening at [%s]:%s", local_addr, local_port_str);
     else
         LOGI("listening at %s:%s", local_addr, local_port_str);
