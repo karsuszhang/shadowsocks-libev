@@ -60,6 +60,7 @@
 #include "plugin.h"
 #include "local.h"
 #include "winsock.h"
+#include "jconf.h"
 
 #ifndef LIB_ONLY
 #ifdef __APPLE__
@@ -588,12 +589,11 @@ server_handshake(EV_P_ ev_io *w, buffer_t *buf)
     }
 
     if (!remote->direct) {
-        int gl = 100;
-        if(gl > 0)
+        if(server->listener->garbage_len > 0)
         {
-            LOGI("add garbage header %d before len %d after %d", gl, abuf->len, abuf->len + gl);
-            memmove(abuf->data + gl, abuf->data, abuf->len);
-            abuf->len += gl;
+            LOGI("add garbage header %d before len %d after %d", server->listener->garbage_len, abuf->len, abuf->len + server->listener->garbage_len);
+            memmove(abuf->data + server->listener->garbage_len, abuf->data, abuf->len);
+            abuf->len += server->listener->garbage_len;
         }
 
         int err = crypto->encrypt(abuf, server->e_ctx, BUF_SIZE);
@@ -1450,6 +1450,7 @@ main(int argc, char **argv)
     int pid_flags    = 0;
     int mtu          = 0;
     int mptcp        = 0;
+    int garbageLen   = 0;
     char *user       = NULL;
     char *local_port = NULL;
     char *local_addr = NULL;
@@ -1682,6 +1683,8 @@ main(int argc, char **argv)
         if (ipv6first == 0) {
             ipv6first = conf->ipv6_first;
         }
+
+        garbageLen = conf->garbage_len;
     }
 
     if (remote_num == 0 || remote_port == NULL ||
@@ -1860,6 +1863,7 @@ main(int argc, char **argv)
     listen_ctx.timeout = atoi(timeout);
     listen_ctx.iface   = iface;
     listen_ctx.mptcp   = mptcp;
+    listen_ctx.garbage_len = garbageLen;
 
     // Setup signal handler
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);

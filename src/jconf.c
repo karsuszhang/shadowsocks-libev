@@ -328,6 +328,9 @@ read_jconf(const char *file)
                     value, json_boolean,
                     "invalid config file: option 'no_delay' must be a boolean");
                 conf.no_delay = value->u.boolean;
+            } else if (strcmp(name, "garbageLen") == 0) {
+                check_json_value_type(value, json_integer, "invalid config file: option 'garbageLen' must be a int");
+                conf.garbage_len = value->u.integer;
             }
         }
     } else {
