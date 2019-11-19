@@ -8,7 +8,7 @@ LABEL maintainer="kev <noreply@datageek.info>, Sah <contact@leesah.name>"
 ENV SERVER_ADDR 0.0.0.0
 ENV SERVER_PORT 8388
 ENV PASSWORD=
-ENV METHOD      aes-256-cfb
+ENV METHOD      aes-256-gcm
 ENV TIMEOUT     300
 ENV DNS_ADDRS    8.8.8.8,8.8.4.4
 ENV ARGS=
@@ -35,6 +35,7 @@ RUN set -ex \
  && apk del .build-deps \
  # Runtime dependencies setup
  && apk add --no-cache \
+      ca-certificates \
       rng-tools \
       $(scanelf --needed --nobanner /usr/bin/ss-* \
       | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
@@ -49,7 +50,6 @@ CMD exec ss-server \
       -k ${PASSWORD:-$(hostname)} \
       -m $METHOD \
       -t $TIMEOUT \
-      --fast-open \
       -d $DNS_ADDRS \
       -u \
       $ARGS
