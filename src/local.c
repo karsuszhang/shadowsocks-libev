@@ -600,7 +600,7 @@ not_bypass:
     if (!remote->direct) {
         if(server->listener->garbage_len > 0)
         {
-            LOGI("add garbage header %d before len %d after %d", server->listener->garbage_len, abuf->len, abuf->len + server->listener->garbage_len);
+            LOGI("add garbage header %d before len %d after %d", (int)(server->listener->garbage_len), (int)(abuf->len), (int)(abuf->len + server->listener->garbage_len));
             memmove(abuf->data + server->listener->garbage_len, abuf->data, abuf->len);
             abuf->len += server->listener->garbage_len;
         }
