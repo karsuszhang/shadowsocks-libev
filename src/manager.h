@@ -60,6 +60,7 @@ struct manager_ctx {
     int mtu;
     int ipv6first;
     char *workdir;
+    int garbage_len;
 #ifdef HAVE_SETRLIMIT
     int nofile;
 #endif

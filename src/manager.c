@@ -115,6 +115,7 @@ build_config(char *prefix, struct manager_ctx *manager, struct server *server)
     fprintf(f, "{\n");
     fprintf(f, "\"server_port\":%d,\n", atoi(server->port));
     fprintf(f, "\"password\":\"%s\"", server->password);
+    fprintf(f, ",\n\"garbageLen\":%d", manager->garbage_len);
     if (server->method)
         fprintf(f, ",\n\"method\":\"%s\"", server->method);
     else if (manager->method)
@@ -866,6 +867,8 @@ main(int argc, char **argv)
     int mtu        = 0;
     int ipv6first  = 0;
 
+    int garbage_len = 0;
+
 #ifdef HAVE_SETRLIMIT
     static int nofile = 0;
 #endif
@@ -1052,6 +1055,7 @@ main(int argc, char **argv)
         if (acl == NULL) {
             acl = conf->acl;
         }
+        garbage_len = conf->garbage_len;
 #ifdef HAVE_SETRLIMIT
         if (nofile == 0) {
             nofile = conf->nofile;
@@ -1171,6 +1175,7 @@ main(int argc, char **argv)
     manager.plugin_opts     = plugin_opts;
     manager.ipv6first       = ipv6first;
     manager.workdir         = workdir;
+    manager.garbage_len     = garbage_len;
 #ifdef HAVE_SETRLIMIT
     manager.nofile = nofile;
 #endif
