@@ -1871,7 +1871,7 @@ main(int argc, char **argv)
 #endif
 
     // Setup keys
-    LOGI("initializing ciphers... %s", method);
+    LOGI("main initializing ciphers... %s", method);
     crypto = crypto_init(password, key, method);
     if (crypto == NULL)
         FATAL("failed to initialize ciphers");
@@ -2076,7 +2076,7 @@ _start_ss_local_server(profile_t profile, ss_local_callback callback, void *udat
 #endif
 
     // Setup keys
-    LOGI("initializing ciphers... %s", method);
+    LOGI("_start_ss_local_server initializing ciphers... %s", method);
     crypto = crypto_init(password, NULL, method);
     if (crypto == NULL)
         FATAL("failed to init ciphers");
