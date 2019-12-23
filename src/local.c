@@ -363,6 +363,7 @@ server_handshake(EV_P_ ev_io *w, buffer_t *buf)
         return -1;
     }
 
+    LOGI("do server_handshake");
     char host[MAX_HOSTNAME_LEN + 1], ip[INET6_ADDRSTRLEN], port[16];
 
     buffer_t *abuf = server->abuf;
@@ -598,12 +599,14 @@ not_bypass:
     }
 
     if (!remote->direct) {
+    #ifdef __ANDROID__
         if(server->listener->garbage_len > 0)
         {
             LOGI("add garbage header %d before len %d after %d", (int)(server->listener->garbage_len), (int)(abuf->len), (int)(abuf->len + server->listener->garbage_len));
             memmove(abuf->data + server->listener->garbage_len, abuf->data, abuf->len);
             abuf->len += server->listener->garbage_len;
         }
+    #endif
 
         int err = crypto->encrypt(abuf, server->e_ctx, SOCKET_BUF_SIZE);
         if (err) {
@@ -1902,6 +1905,7 @@ main(int argc, char **argv)
     listen_ctx.mptcp   = mptcp;
     listen_ctx.garbage_len = garbageLen;
 
+    LOGI("Init garbageLen %d", garbageLen);
     // Setup signal handler
     ev_signal_init(&sigint_watcher, signal_cb, SIGINT);
     ev_signal_init(&sigterm_watcher, signal_cb, SIGTERM);
