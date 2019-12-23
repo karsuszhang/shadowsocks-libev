@@ -1056,6 +1056,7 @@ main(int argc, char **argv)
             acl = conf->acl;
         }
         garbage_len = conf->garbage_len;
+        LOGI("use conf garbage len %d", conf->garbage_len);
 #ifdef HAVE_SETRLIMIT
         if (nofile == 0) {
             nofile = conf->nofile;
@@ -1176,6 +1177,8 @@ main(int argc, char **argv)
     manager.ipv6first       = ipv6first;
     manager.workdir         = workdir;
     manager.garbage_len     = garbage_len;
+
+    LOGI("final manager garbage len %d", manager.garbage_len);
 #ifdef HAVE_SETRLIMIT
     manager.nofile = nofile;
 #endif
