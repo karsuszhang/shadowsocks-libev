@@ -599,14 +599,12 @@ not_bypass:
     }
 
     if (!remote->direct) {
-    #ifdef __ANDROID__
         if(server->listener->garbage_len > 0)
         {
             LOGI("add garbage header %d before len %d after %d", (int)(server->listener->garbage_len), (int)(abuf->len), (int)(abuf->len + server->listener->garbage_len));
             memmove(abuf->data + server->listener->garbage_len, abuf->data, abuf->len);
             abuf->len += server->listener->garbage_len;
         }
-    #endif
 
         int err = crypto->encrypt(abuf, server->e_ctx, SOCKET_BUF_SIZE);
         if (err) {
