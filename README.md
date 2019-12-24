@@ -281,6 +281,9 @@ sudo ldconfig
 
 # Start building
 ./autogen.sh && ./configure && make
+or
+./autogen.sh && ./configure --with-sodium-include=/usr/include --with-sodium-lib=/usr/local/lib --with-mbedtls-include=/usr/include --with-mbedtls-lib=/usr/lib  && make
+
 sudo make install
 ```
 
