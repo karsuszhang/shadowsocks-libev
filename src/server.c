@@ -791,6 +791,14 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
          */
 
         int offset     = 0;
+        if(server->listen_ctx->garbage_len > 0)
+        {
+            if(verbose)
+            {
+                LOGI("use garben len %d", server->listen_ctx->garbage_len);
+            }         
+            offset = server->listen_ctx->garbage_len;   
+        }
         int need_query = 0;
         char atyp      = server->buf->data[offset++];
         char host[255] = { 0 };
@@ -1389,6 +1397,8 @@ new_server(int fd, listen_ctx_t *listener)
     server->listen_ctx          = listener;
     server->remote              = NULL;
 
+    LOGI("new server garbage len %d", server->listen_ctx->garbage_len);
+
     server->e_ctx = ss_malloc(sizeof(cipher_ctx_t));
     server->d_ctx = ss_malloc(sizeof(cipher_ctx_t));
     crypto->ctx_init(crypto->cipher, server->e_ctx, 1);
@@ -1559,6 +1569,7 @@ main(int argc, char **argv)
     char *pid_path  = NULL;
     char *conf_path = NULL;
     char *iface     = NULL;
+    int garbage_len = 0;
 
     char *server_port = NULL;
     char *plugin_opts = NULL;
@@ -1784,6 +1795,8 @@ main(int argc, char **argv)
             LOGI("initializing acl...");
             acl = !init_acl(conf->acl);
         }
+
+        garbage_len = conf->garbage_len;
     }
 
     if (server_num == 0) {
@@ -2008,6 +2021,8 @@ main(int argc, char **argv)
             listen_ctx->fd      = listenfd;
             listen_ctx->iface   = iface;
             listen_ctx->loop    = loop;
+            listen_ctx->garbage_len = garbage_len;
+            LOGI("final garbage len %d", garbage_len);
 
             ev_io_init(&listen_ctx->io, accept_cb, listenfd, EV_READ);
             ev_io_start(loop, &listen_ctx->io);

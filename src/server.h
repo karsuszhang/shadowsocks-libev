@@ -47,6 +47,7 @@ typedef struct listen_ctx {
     ev_io io;
     int fd;
     int timeout;
+    int garbage_len;
     char *iface;
     struct ev_loop *loop;
 } listen_ctx_t;
