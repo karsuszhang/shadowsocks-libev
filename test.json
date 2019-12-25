@@ -17,5 +17,6 @@
 	"method": "aes-192-gcm",
 	"mode":"tcp_and_udp",
 	"fast_open":true,
-	"reuse_port": true
+	"reuse_port": true,
+	"garbageLen": 0
 }
